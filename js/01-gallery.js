@@ -17,24 +17,26 @@ const markup = galleryItems.map(photo =>
     .join("");
 gallery.insertAdjacentHTML('beforeend', markup);
 
+const imageModalInstance = basicLightbox.create(`<img src="" class="gallery__image">`,
+        {
+            onClose: () => {
+                document.removeEventListener("keydown", onModalKeydownHandler)
+            }
+        });
+
 gallery.addEventListener("click", onGalleryClickHandler);
 
 function onGalleryClickHandler(event) {
     event.preventDefault();
-    console.log(event.target);
-    const instance = basicLightbox.create(`
-            <img src="${event.target.dataset.source}" class="gallery__image">
-        `)
 
-    instance.show();
-
-    document.addEventListener("keydown", onModalKeydownHandler, instance);
+    imageModalInstance.element().firstElementChild.innerHTML = `<img src="${event.target.dataset.source}" class="gallery__image">`
+    imageModalInstance.show();
+    document.addEventListener("keydown", onModalKeydownHandler);
 }
 
-function onModalKeydownHandler(event, options){
+function onModalKeydownHandler(event){
     if (event.key === "Escape") {
-        console.log("Kill modal");
-        options.hide();
-    }
+        imageModalInstance.close();
+    } 
 }
 
